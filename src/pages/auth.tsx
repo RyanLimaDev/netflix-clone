@@ -1,10 +1,19 @@
 import Input from '@/components/Input'
 import Image from 'next/image'
-import { EventHandler, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
+import axios from 'axios'
+import { signIn } from 'next-auth/react'
+import { redirect } from 'next/dist/server/api-utils'
+import { useRouter } from 'next/router'
+
+import { FcGoogle } from 'react-icons/fc'
+import { FaGithub } from 'react-icons/fa'
 
 export default function Auth () {
+    const router = useRouter();
+
     const [email, setEmail] = useState('')
-    const [username, setUsername] = useState('')
+    const [name, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
     const [variant, setVariant] = useState('login')
@@ -13,6 +22,35 @@ export default function Auth () {
         setVariant((currentVariant) => currentVariant === 'login' ? 'register' : 'login')
     }, [])
     
+    const login = useCallback(async () => {
+        try {
+            await signIn('credentials', {
+                email,
+                password,
+                redirect: false,
+                callbackUrl: '/'
+            });
+
+            router.push('/')
+        } catch (error) {
+            console.log(error)
+        }
+    }, [email, password, router]);
+
+    const register = useCallback(async () => {
+        try {
+            await axios.post('/api/register', {
+                email, 
+                name,
+                password
+            });
+            login()
+        } catch (error) {
+            console.log(error)
+        }
+    }, [email, name, password, login])
+
+
 
     return(
        <div className="relative h-full w-full bg-[url('../../public/images/hero.jpg')] bg-no-repeat bg-center bg-cover">
@@ -27,10 +65,10 @@ export default function Auth () {
                         </h2>
                         <div className='flex flex-col gap-4'>
                             {variant === 'register' && <Input
-                                id='username'
+                                id='name'
                                 label='Usuario'
                                 onChange={(env: React.ChangeEvent<HTMLInputElement>) => setUsername(env.target.value)}
-                                value={username}
+                                value={name}
                             />}
                             
                             <Input
@@ -49,10 +87,47 @@ export default function Auth () {
                             />
                         </div>
 
-                        <button className='bg-red-600 py-3 text-white rounded-md w-full mt-10 transition
+                        <button onClick={variant === 'login' ? login : register} className='bg-red-600 py-3 text-white rounded-md w-full mt-10 transition
                         hover:bg-red-700'>
                             {variant === 'login' ? 'Entrar' : 'Registrar'}
                         </button>
+
+                        <div className='flex flex-row items-center gap-4 mt-8 justify-center'>
+                            <div
+                                onClick={ () => signIn('google', { callbackUrl: '/' } ) }
+                                className='
+                                    w-10 h-10
+                                    bg-white
+                                    rounded-full
+                                    flex
+                                    justify-center
+                                    items-center
+                                    cursor-pointer
+                                    hover:opacity-80
+                                    transition
+                                '
+                            >
+                                <FcGoogle size={30} />
+                            </div>
+
+                            <div 
+                                onClick={ () => signIn('github', { callbackUrl: '/' } ) }
+                                className='
+                                    w-10 h-10
+                                    bg-white
+                                    rounded-full
+                                    flex
+                                    justify-center
+                                    items-center
+                                    cursor-pointer
+                                    hover:opacity-80
+                                    transition
+                                '
+                            >
+                                <FaGithub size={30} />
+                            </div>
+                        </div>
+
 
                         <p className='text-neutral-500 mt-12'>
                             {variant === 'login' ? 'Novo por aqui?' : 'Já possui uma conta?'}
