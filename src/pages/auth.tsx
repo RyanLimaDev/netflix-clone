@@ -2,12 +2,29 @@ import Input from '@/components/Input'
 import Image from 'next/image'
 import { useCallback, useState } from 'react'
 import axios from 'axios'
-import { signIn } from 'next-auth/react'
-import { redirect } from 'next/dist/server/api-utils'
+import { signIn, getSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-
+import { NextPageContext } from 'next';
 import { FcGoogle } from 'react-icons/fc'
 import { FaGithub } from 'react-icons/fa'
+
+export async function getServerSideProps(context: NextPageContext) {
+    const session = await getSession(context);
+  
+    if (session) {
+      return {
+        redirect: {
+          destination: '/',
+          permanent: false,
+        }
+      }
+    }
+  
+    return {
+      props: {}
+    }
+  }
+
 
 export default function Auth () {
     const router = useRouter();
@@ -27,15 +44,12 @@ export default function Auth () {
             await signIn('credentials', {
                 email,
                 password,
-                redirect: false,
-                callbackUrl: '/'
+                callbackUrl: '/profiles'
             });
-
-            router.push('/')
         } catch (error) {
             console.log(error)
         }
-    }, [email, password, router]);
+    }, [email, password]);
 
     const register = useCallback(async () => {
         try {
@@ -94,7 +108,7 @@ export default function Auth () {
 
                         <div className='flex flex-row items-center gap-4 mt-8 justify-center'>
                             <div
-                                onClick={ () => signIn('google', { callbackUrl: '/' } ) }
+                                onClick={ () => signIn('google', { callbackUrl: '/profile' } ) }
                                 className='
                                     w-10 h-10
                                     bg-white
@@ -111,7 +125,7 @@ export default function Auth () {
                             </div>
 
                             <div 
-                                onClick={ () => signIn('github', { callbackUrl: '/' } ) }
+                                onClick={ () => signIn('github', { callbackUrl: '/profile' } ) }
                                 className='
                                     w-10 h-10
                                     bg-white

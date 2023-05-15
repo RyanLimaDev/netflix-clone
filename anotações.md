@@ -1,3 +1,14 @@
+// No processo
+
+- Logar pelo Github não está funcionando
+
+
+
+
+
+
+//Corrigidos:
+
 Existe um erro na hora de efetuar o Registro
 
 Suspeitas:
