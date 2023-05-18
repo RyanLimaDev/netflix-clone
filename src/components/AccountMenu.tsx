@@ -18,9 +18,13 @@ const AccountMenu: React.FC<AccountMenuProps> = ({visible}) => {
                         Username
                     </p>
                 </div>
+                <hr className="bg-gray-600 border-0 h-px my-4"/>
+                <div onClick={() => signOut()} className="px-3 text-center text-white text-sm hover:underline">
+                    Desconectar
+                </div>
             </div>
         </div>
     )
-}
+};
 
 export default AccountMenu

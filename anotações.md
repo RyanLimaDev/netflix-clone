@@ -4,7 +4,7 @@
 
 // Lembretes
 
-- Fazer o Pull das Branch
+- Paramos na finalização do useBillborde
 
 
 
