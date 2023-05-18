@@ -1,8 +1,10 @@
 // No processo
 
-- Logar pelo Github não está funcionando
+- Logar pelo Github não está funcionando (não funciona no original do tutorial tbm)
 
+// Lembretes
 
+- Fazer o Pull das Branch
 
 
 
